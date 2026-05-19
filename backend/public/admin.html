@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Administrativo - Refúgio da Serra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dark">
+    <div class="bg-forest"></div>
+    <div class="bg-blur"></div>
+    <div class="particles"></div>
+
+    <!-- LOGIN -->
+    <div id="login" class="login-box">
+        <h1 class="login-title">Refúgio Admin</h1>
+        <p class="login-sub">Acesso restrito</p>
+
+        <form id="login-form" onsubmit="fazerLogin(event)">
+            <div class="login-field">
+                <input id="login-user" type="text" placeholder=" " autocomplete="username" required>
+                <label for="login-user">Usuário</label>
+            </div>
+
+            <div class="login-field">
+                <input id="login-pass" type="password" placeholder=" " autocomplete="current-password" required>
+                <label for="login-pass">Senha</label>
+            </div>
+
+            <button id="login-btn" class="login-btn" type="submit" aria-label="Entrar no painel administrativo">
+                Entrar
+            </button>
+
+            <p id="login-erro">❌ Usuário ou senha incorretos.</p>
+        </form>
+    </div>
+
+    <!-- PAINEL -->
+    <div id="painel" class="painel">
+        <button class="btn-menu-mobile" onclick="toggleSidebarMobile()" aria-label="Abrir menu lateral">☰</button>
+
+        <aside class="sidebar" aria-label="Barra lateral do painel">
+            <h2 class="sidebar-title">Painel</h2>
+
+            <nav class="sidebar-menu" aria-label="Navegação principal">
+                <button class="side-btn ativo" onclick="abrirSecao('dashboard', this)">📊 Dashboard</button>
+                <button class="side-btn" onclick="abrirSecao('news', this)">📧 Newsletter</button>
+                <button class="side-btn" onclick="abrirSecao('contato', this)">💬 Contatos</button>
+                <button class="side-btn" onclick="abrirSecao('reservas', this)">📅 Reservas</button>
+                <button class="side-btn" onclick="abrirSecao('insights', this)">🧠 Insights</button>
+            </nav>
+
+            <div class="tema-toggle">
+                <span>Modo</span>
+                <label class="switch">
+                    <input id="tema-checkbox" type="checkbox" onchange="toggleTema()" aria-label="Alternar tema claro/escuro">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </aside>
+
+        <main class="conteudo">
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="secao ativa" aria-labelledby="titulo-dashboard">
+                <h2 id="titulo-dashboard">📊 Resumo Geral</h2>
+
+                <div class="cards-dashboard">
+                    <div class="card">
+                        <h3>Newsletter</h3>
+                        <p id="qtd-news">0</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Contatos</h3>
+                        <p id="qtd-contato">0</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Reservas</h3>
+                        <p id="qtd-reserva">0</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="export-btn" onclick="baixarBackupJSON()">🛡 Baixar backup completo (JSON)</button>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Reservas por pacote</h3>
+                        <canvas id="chartReservasPacote" aria-label="Gráfico de reservas por pacote"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Cadastros por dia</h3>
+                        <canvas id="chartCadastrosDia" aria-label="Gráfico de cadastros por dia"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEWSLETTER -->
+            <section id="news" class="secao" aria-labelledby="titulo-news">
+                <h2 id="titulo-news">📧 Newsletter</h2>
+
+                <div class="acao-bar">
+                    <button class="export-btn" onclick="exportarCSV('newsletter')">📥 Exportar CSV</button>
+                    <button class="export-btn" onclick="exportarExcel('newsletter')">📊 Exportar Excel</button>
+                </div>
+
+                <input class="busca" placeholder="Pesquisar..." oninput="filtrarTabela('newsletter', this.value)">
+
+                <table class="tabela-premium">
+                    <thead>
+                        <tr>
+                            <th onclick="ordenarTabela('newsletter','id')">ID</th>
+                            <th onclick="ordenarTabela('newsletter','email')">Email</th>
+                            <th onclick="ordenarTabela('newsletter','data_envio')">Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-news"></tbody>
+                </table>
+                <div class="paginacao" id="paginacao-news"></div>
+            </section>
+
+            <!-- CONTATOS -->
+            <section id="contato" class="secao" aria-labelledby="titulo-contato">
+                <h2 id="titulo-contato">💬 Contatos</h2>
+
+                <div class="acao-bar">
+                    <button class="export-btn" onclick="exportarCSV('contatos')">📥 Exportar CSV</button>
+                    <button class="export-btn" onclick="exportarExcel('contatos')">📊 Exportar Excel</button>
+                </div>
+
+                <input class="busca" placeholder="Pesquisar..." oninput="filtrarTabela('contatos', this.value)">
+
+                <table class="tabela-premium">
+                    <thead>
+                        <tr>
+                            <th onclick="ordenarTabela('contatos','id')">ID</th>
+                            <th onclick="ordenarTabela('contatos','nome')">Nome</th>
+                            <th onclick="ordenarTabela('contatos','email')">Email</th>
+                            <th onclick="ordenarTabela('contatos','mensagem')">Mensagem</th>
+                            <th onclick="ordenarTabela('contatos','data_envio')">Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-contato"></tbody>
+                </table>
+                <div class="paginacao" id="paginacao-contato"></div>
+                <p class="hint">Clique em uma linha ou no botão de ações para ver os detalhes completos.</p>
+            </section>
+
+            <!-- RESERVAS -->
+            <section id="reservas" class="secao" aria-labelledby="titulo-reservas">
+                <h2 id="titulo-reservas">📅 Reservas</h2>
+
+                <div class="acao-bar">
+                    <button class="export-btn" onclick="exportarCSV('reservas')">📥 Exportar CSV</button>
+                    <button class="export-btn" onclick="exportarExcel('reservas')">📊 Exportar Excel</button>
+                </div>
+
+                <input class="busca" placeholder="Pesquisar..." oninput="filtrarTabela('reservas', this.value)">
+
+                <table class="tabela-premium">
+                    <thead>
+                        <tr>
+                            <th onclick="ordenarTabela('reservas','id')">ID</th>
+                            <th onclick="ordenarTabela('reservas','nome')">Nome</th>
+                            <th onclick="ordenarTabela('reservas','telefone')">Telefone</th>
+                            <th onclick="ordenarTabela('reservas','data_viagem')">Data Viagem</th>
+                            <th onclick="ordenarTabela('reservas','pacote')">Pacote</th>
+                            <th onclick="ordenarTabela('reservas','data_envio')">Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-reserva"></tbody>
+                </table>
+                <div class="paginacao" id="paginacao-reserva"></div>
+                <p class="hint">Clique em uma linha ou no botão de ações para ver os detalhes completos.</p>
+            </section>
+
+            <!-- INSIGHTS -->
+            <section id="insights" class="secao" aria-labelledby="titulo-insights">
+                <h2 id="titulo-insights">🧠 Insights do Sistema</h2>
+                <div id="insight-text" class="insight-box">
+                    Carregando insights...
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div id="modal-detalhe" class="modal-detalhe" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal-detalhe-content">
+            <button class="modal-close" onclick="fecharModalDetalhe()" aria-label="Fechar detalhes">×</button>
+            <h3 id="modal-titulo"></h3>
+            <pre id="modal-corpo"></pre>
+        </div>
+    </div>
+
+    <!-- Modal Edição -->
+    <div id="modal-edicao" class="modal-detalhe" role="dialog" aria-modal="true" aria-labelledby="modal-edit-titulo">
+        <div class="modal-detalhe-content">
+            <button class="modal-close" onclick="fecharModalEdicao()" aria-label="Fechar edição">×</button>
+            <h3 id="modal-edit-titulo"></h3>
+
+            <form id="form-edicao" onsubmit="salvarEdicao(event)">
+                <div id="campos-edicao"></div>
+                <button type="submit" class="export-btn">💾 Salvar alterações</button>
+            </form>
+        </div>
+    </div>
+
+<!-- Modal Detalhes -->
+<div id="modal-detalhe" class="modal-detalhe" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <div class="modal-detalhe-content">
+        <button class="modal-close" onclick="fecharModalDetalhe()" aria-label="Fechar detalhes">×</button>
+        <h3 id="modal-titulo"></h3>
+        <pre id="modal-corpo"></pre>
+    </div>
+</div>
+
+<!-- Modal Edição -->
+<div id="modal-edicao" class="modal-detalhe" role="dialog" aria-modal="true" aria-labelledby="modal-edit-titulo">
+    <div class="modal-detalhe-content">
+        <button class="modal-close" onclick="fecharModalEdicao()" aria-label="Fechar edição">×</button>
+        <h3 id="modal-edit-titulo"></h3>
+
+        <form id="form-edicao" onsubmit="salvarEdicao(event)">
+            <div id="campos-edicao"></div>
+            <button type="submit" class="export-btn">💾 Salvar alterações</button>
+        </form>
+    </div>
+</div>
+
+<!-- ================= SONS FUTURISTAS ================= -->
+<audio id="sound-open" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-quick-sweep-2172.mp3"></audio>
+<audio id="sound-error" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3"></audio>
+<audio id="sound-success" src="https://assets.mixkit.co/sfx/preview/mixkit-bonus-earned-in-video-game-2058.mp3"></audio>
+
+<!-- ================= POPUP PREMIUM DE CONFIRMAÇÃO ================= -->
+<div id="modal-confirmar" class="modal-confirmar" role="dialog" aria-modal="true">
+    <div class="modal-confirmar-content holograma">
+        <div class="icon-alerta">⚠️</div>
+
+        <h3>Confirmar exclusão</h3>
+        <p id="texto-confirmar">Tem certeza que deseja excluir este registro?</p>
+
+        <div class="confirm-buttons">
+            <button class="btn-cancelar" type="button" onclick="fecharConfirmacao()">Cancelar</button>
+            <button class="btn-excluir" type="button" id="btn-excluir-confirmado">Excluir</button>
+        </div>
+    </div>
+</div>
+
+<script src="admin.js"></script>
+
+
+    <script src="admin.js"></script>
+</body>
+</html>

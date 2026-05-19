@@ -1,0 +1,30 @@
+# Dependências
+backend/node_modules/
+frontend/node_modules/
+
+# Segredos e Variáveis de Ambiente
+backend/.env
+frontend/.env
+.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build e Cache
+dist/
+build/
+.cache/
+.next/
+out/
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
