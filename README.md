@@ -51,7 +51,7 @@ Basta abrir o arquivo `Refugio_da_Serra.html` no navegador ou hospedar via GitHu
 
 ## 🗺️ Roadmap & Evoluções
 - [ ] **IA Integration:** Implementação de um chatbot inteligente para guiar os usuários.
-- [ ]**A IA no Admin:** Análise de sentimento automática para feedbacks de clientes.
+- [ ] **A IA no Admin:** Análise de sentimento automática para feedbacks de clientes.
 - [ ] **Admin Dashboard:** Gráficos de crescimento de reservas e leads.
 
 ---
